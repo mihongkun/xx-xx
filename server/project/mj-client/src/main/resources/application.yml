@@ -1,6 +1,6 @@
 site:
     title: 麻将
-    serverUrl: ws://127.0.0.1:8010/g
+    serverUrl: ws://192.168.0.113:8010/g
 application:
     message: Hello, Andy
 spring:
@@ -24,7 +24,7 @@ debug:
 jdbc:
     url: jdbc:mysql://127.0.0.1:3306/boss?autoReconnect=true&characterEncoding=utf8&useSSL=false
     username: root
-    password: 111111
+    password: 123123
     driver-class-name: com.mysql.jdbc.Driver
     maxNums: 20
     minNums: 5
