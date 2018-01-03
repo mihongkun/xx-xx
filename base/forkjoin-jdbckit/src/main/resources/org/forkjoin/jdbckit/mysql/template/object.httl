@@ -1,0 +1,245 @@
+<!--#set(Table t)-->
+<!--#set(Column c)-->
+<!--#set(SqlUtils sql)-->
+<!--#set(UniqueIndex index)-->
+package  $!{pack};
+
+import java.beans.Transient;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
+
+import org.forkjoin.jdbckit.core.UniqueInfo;
+
+
+import org.springframework.jdbc.core.RowMapper;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import org.forkjoin.jdbckit.core.EntityObject;
+import org.forkjoin.jdbckit.core.KeyObject;
+import org.forkjoin.jdbckit.core.EntityMeta;
+import org.forkjoin.jdbckit.core.identifier.*;
+<!--    #if(t.hasDateColumns)-->
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+<!--#end-->
+
+import $!{pack}.meta.$!{t.className}Meta;
+
+public class $!{t.className}DO extends EntityObject<$!{t.className}DO, $!{t.className}DO.Key>{
+
+<!--#for(c : t.allColumns)-->
+<!--        #if(c.remark)-->
+    /**$!{c.remark}*/
+<!--        #end-->
+<!--        #if(c.dateColumn)-->
+    private java.util.Date $!{c.fieldName};
+<!--        #else-->
+<!--            #if(c.objectType != 0 && (! c.nullable))-->
+    private $!{c.className} $!{c.fieldName};
+<!--            #else-->
+    private $!{c.className} $!{c.fieldName};
+<!--            #end-->
+<!--        #end-->
+<!--#end-->
+
+    public static class Key implements KeyObject<$!{t.className}DO, $!{t.className}DO.Key>{
+<!--#for(c : t.keyColumns)-->
+        private $!{c.className} $!{c.fieldName};
+<!--#end-->
+##构造函数
+        public Key() {
+        }
+<!--#if(t.hasKeyConstructorArgs)-->
+
+        public Key($!{t.keyConstructorArgs}) {
+<!--        #for(c : t.keyColumns)-->
+            this.$!{c.fieldName} = $!{c.fieldName};
+<!--        #end-->
+        }
+<!--#end-->
+
+        @JsonIgnore
+        @Transient
+        @Override
+        public Object[] getQueryParams() {
+            return new Object[]{
+<!--#for(c : t.keyColumns)-->
+                $!{c.getGetName()}()<!--#if(!for.last)-->,<!--#end-->
+
+<!--#end-->
+            };
+        }
+<!--#for(c : t.keyColumns)-->
+
+        public $!{c.className} $!{c.getGetName()}() {
+            return $!{c.fieldName};
+        }
+        public void $!{c.setName}($!{c.className} $!{c.fieldName}) {
+            this.$!{c.fieldName} = $!{c.fieldName};
+        }
+<!--#end-->
+
+        @Override
+        public String toStringKey(){
+<!--        #if(t.keyColumns.size > 1)-->
+            StringBuilder sb = new StringBuilder();
+<!--            #for(c : t.keyColumns)-->
+<!--                #if(for.index != 0)-->
+            sb.append('-');
+<!--                #end-->
+            sb.append($!{c.getGetName()}());
+<!--            #end-->
+            return sb.toString();
+<!--        #else(t.keyColumns.size ==0)-->
+            return null;
+<!--        #else-->
+<!--#set(Column c = t.keyColumns.get(0))-->
+            return String.valueOf($!{c.getGetName()}());
+<!--        #end-->
+
+        }
+
+        @Override
+        public $!{t.className}Meta getEntityMeta() {
+            return ENTITY_META;
+        }
+
+        @Override
+        public String toString() {
+            return $!{t.keyToString};
+        }
+    }
+
+    @Override
+    public Key getKey() {
+        return new Key() {
+<!--#for(c : t.keyColumns)-->
+
+            public $!{c.className} $!{c.getGetName()}() {
+                return $!{c.fieldName};
+            }
+<!--        #if(!c.autoIncrement)-->
+
+            public void $!{c.setName}($!{c.className} $!{c.fieldName}) {
+                $!{t.className}DO.this.$!{c.fieldName}  = $!{c.fieldName};
+                $!{t.className}DO.this.changeProperty("$!{c.fieldName}",$!{c.fieldName});
+            }
+<!--        #end-->
+<!--#end-->
+
+            @Override
+            public String toString() {
+                return $!{t.keyToString};
+            }
+        };
+    }
+
+
+
+##构造函数
+    public $!{t.className}DO() {
+    }
+
+<!--#if(t.hasConstructorArgs)-->
+    public $!{t.className}DO($!{t.constructorArgs}) {
+<!--        #for(c : t.allColumns)-->
+<!--            #if(!c.autoIncrement)-->
+        this.$!{c.fieldName} = $!{c.fieldName};
+<!--            #end-->
+<!--        #end-->
+    }
+<!--#end-->
+
+
+    public $!{t.className}DO newInstance(){
+        return new $!{t.className}DO();
+    }
+
+    public void setKey(Object key){
+<!--#if(t.keyColumn)-->
+<!--    #if(t.keyColumn.className == "int")-->
+        this.$!{t.keyColumn.fieldName} = ((Number)key).intValue();
+<!--    #else-->
+        this.$!{t.keyColumn.fieldName} = ($!{t.keyColumn.className})key;
+<!--    #end-->
+<!--#else-->
+        throw new RuntimeException("未实现的方法!");
+<!--#end-->
+    }
+<!--#for(c : t.allColumns)-->
+
+<!--        #if(c.remark)-->
+    /**
+     * $!{c.remark}
+     **/
+<!--        #end-->
+    public $!{c.className} $!{c.getGetName()}() {
+        return $!{c.fieldName};
+    }
+
+<!--            #if(c.remark)-->
+    /**
+     * $!{c.remark}
+     **/
+<!--            #end-->
+<!--        #if(!c.autoIncrement)-->
+    public void $!{c.setName}($!{c.className} $!{c.fieldName}) {
+        this.$!{c.fieldName} = $!{c.fieldName};
+        changeProperty("$!{c.fieldName}",$!{c.fieldName});
+    }
+<!--        #else-->
+    public void $!{c.setName}($!{c.className} $!{c.fieldName}) {
+        this.$!{c.fieldName} = $!{c.fieldName};
+        changeProperty("$!{c.fieldName}",$!{c.fieldName});
+    }
+<!--        #end-->
+<!--#end-->
+
+    @Override
+    public Object get(Field dbName){
+        switch(dbName.getNativeValue()){
+<!--#for(c : t.allColumns)-->
+        case "$!{c.dbName}":
+            return $!{c.fieldName};
+<!--#end-->
+        default :
+            return null;
+        }
+    }
+
+
+    @Override
+    public boolean set(Field dbName, Object obj) {
+        switch(dbName.getNativeValue()){
+<!--#for(c : t.allColumns)-->
+        case "$!{c.dbName}":
+            $!{c.fieldName} = ($!{c.className})obj;
+            return true;
+<!--#end-->
+        default :
+            return false;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return $!{t.getToString()};
+    }
+
+    @Override
+    @JsonIgnore
+    @Transient
+    public $!{t.className}Meta getEntityMeta() {
+        return ENTITY_META;
+    }
+
+
+    public static final $!{t.className}Meta ENTITY_META = $!{t.className}Meta.instance;
+}

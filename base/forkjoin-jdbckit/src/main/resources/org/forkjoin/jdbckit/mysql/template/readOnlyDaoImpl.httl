@@ -1,0 +1,37 @@
+<!--#set(Table t)-->
+<!--#set(Column c)-->
+<!--#set(SqlUtils sql)-->
+<!--#set(String implPack)-->
+<!--#set(String beanPack)-->
+package $!{implPack};
+
+<!--#if(jdbcDataSourceName)-->
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+<!--#end-->
+import org.forkjoin.jdbckit.core.impi.ReadOnlyDaoImpi;
+import $!{beanPack}.$!{t.className}DO;
+
+import org.springframework.stereotype.Component;
+
+import javax.sql.DataSource;
+
+@Component
+public class $!{t.className}ReadOnlyDao extends ReadOnlyDaoImpi<$!{t.className}DO,$!{t.className}DO.Key>  {
+	public $!{t.className}ReadOnlyDao() {
+		super($!{t.className}DO.ENTITY_META);
+	}
+
+	public $!{t.className}DO get($!{t.keysParameters}) {
+		return get(new $!{t.className}DO.Key($!{t.methodParameters}));
+	}
+<!--#if(jdbcDataSourceName)-->
+
+	@Override
+	@Autowired
+    @Qualifier("$!{jdbcDataSourceName}")
+    public void setDataSource(DataSource dataSource) {
+        super.setDataSource(dataSource);
+    }
+<!--#end-->
+}
