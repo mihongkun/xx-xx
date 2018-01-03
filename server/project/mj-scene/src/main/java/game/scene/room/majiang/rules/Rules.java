@@ -14,17 +14,20 @@ public abstract class Rules {
         switch (name) {
             case "zhongyouGD":
                 return new ZhongyouGdRules(config);
+            case "hrb":
+                return new HRBRules(config);
             default:
                 return new ZhongyouGdRules(config);
         }
     }
+
     public abstract boolean rest();
 
     protected Config config;
     private int baoliuLength = 12;
 
 
-    private int shouTimeMillisecond =15000;
+    private int shouTimeMillisecond = 15000;
 
     public Rules(Config config) {
         this.config = config;
@@ -51,9 +54,11 @@ public abstract class Rules {
     public abstract boolean isFangPao();
 
     public abstract boolean isZaMa();
+
     public abstract int getZaMa();
 
     public abstract Map<JiaFanType, FanInfo> getJiaFanMap();
+
     public abstract Map<BaseFanType, FanInfo> getBaseFanMap();
 
     public abstract boolean isHuiGang();
