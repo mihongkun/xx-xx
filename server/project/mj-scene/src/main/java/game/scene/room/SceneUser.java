@@ -8,22 +8,48 @@ import mj.net.message.login.Notice;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * @author zuoge85@gmail.com on 16/10/7.
+ * 房间实现类
  */
 public class SceneUser {
+    /**
+     * 用户ID
+     */
     private int userId;
+    /**
+     * 用户名
+     */
     private String userName;
+    /**
+     * 座位号
+     */
     private int locationIndex;
+    /**
+     * 会话ID
+     */
     private int sessionId = -1;
+    /**
+     * 网关ID
+     */
     private int gatewayId = -1;
+    /**
+     * 是否加入游戏
+     */
     private boolean joinGame;
-
+    /**
+     * 头像
+     */
     private String avatar;
     /**
      * 0:女生,1:男生,2:未知
      */
     private int sex;
+    /**
+     * 金币数量
+     */
     private int gold;
+    /**
+     * 得分
+     */
     private int score;
 
     private RoomImpi room;
@@ -34,8 +60,13 @@ public class SceneUser {
 
     @Autowired
     private SceneService sceneService;
+    /**
+     * 是否在线
+     */
     private boolean online;
-
+    /**
+     * IP地址
+     */
     private String ip;
     /**
      * 经度
